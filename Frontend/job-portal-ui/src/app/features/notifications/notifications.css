@@ -1,0 +1,27 @@
+h2 {
+    margin-bottom: 16px;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 800px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.unread {
+    border-left: 4px solid var(--primary);
+}
+
+.sub,
+.empty {
+    color: var(--muted);
+    font-size: 14px;
+}

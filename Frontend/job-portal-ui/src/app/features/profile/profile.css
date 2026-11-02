@@ -1,0 +1,22 @@
+h2 {
+    margin-bottom: 16px;
+}
+
+.form {
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.msg {
+    color: var(--success);
+}

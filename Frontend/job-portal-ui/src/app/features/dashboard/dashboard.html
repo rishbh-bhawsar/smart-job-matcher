@@ -1,0 +1,53 @@
+<div class="tabs">
+    <button [class.active]="category === 'INDORE'" (click)="setCategory('INDORE')">Indore</button>
+    <button [class.active]="category === 'REMOTE'" (click)="setCategory('REMOTE')">Remote</button>
+    <button class="btn btn-primary sync" (click)="syncNow()">Sync now</button>
+</div>
+
+<div class="filters">
+    <label>
+        Status
+        <select class="field" [(ngModel)]="status" (change)="load()">
+            <option value="NOT_APPLIED">Not applied</option>
+            <option value="APPLIED">Applied</option>
+            <option value="IGNORED">Ignored</option>
+            <option value="">All</option>
+        </select>
+    </label>
+
+    <label>
+        Sort
+        <select class="field" [(ngModel)]="sort">
+            <option value="score">Best match</option>
+            <option value="new">Newest</option>
+        </select>
+    </label>
+
+    <label class="grow">
+        Search
+        <input class="field" type="text" placeholder="Title or company" [(ngModel)]="search" />
+    </label>
+
+    <label>
+        Min score: {{ minScore }}
+        <input type="range" min="0" max="100" step="5" [(ngModel)]="minScore" (change)="load()" />
+    </label>
+</div>
+
+<p class="error" *ngIf="error">
+    {{ error }} <button class="btn" (click)="load()">Retry</button>
+</p>
+
+<p class="summary" *ngIf="!loading && !error">{{ visible.length }} jobs</p>
+<p class="summary" *ngIf="loading">Loading jobs...</p>
+
+<p class="empty" *ngIf="!loading && !error && visible.length === 0">
+    No jobs found for these filters.
+</p>
+
+<div class="grid">
+    <app-job-card *ngFor="let job of visible; trackBy: trackById" [job]="job"
+        (applied)="changeStatus($event, 'APPLIED')" (ignored)="changeStatus($event, 'IGNORED')"></app-job-card>
+</div>
+
+<div class="toast" *ngIf="message">{{ message }}</div>

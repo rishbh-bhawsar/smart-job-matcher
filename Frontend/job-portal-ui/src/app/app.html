@@ -1,0 +1,20 @@
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="logo">AI Job Radar</span>
+
+    <nav class="nav">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/notifications" routerLinkActive="active">
+        Notifications
+        <span class="badge" *ngIf="unread > 0">{{ unread }}</span>
+      </a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    </nav>
+
+    <button class="btn" (click)="toggleTheme()">{{ dark ? 'Light' : 'Dark' }}</button>
+  </div>
+</header>
+
+<main class="container">
+  <router-outlet></router-outlet>
+</main>

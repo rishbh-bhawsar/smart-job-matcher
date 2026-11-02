@@ -1,0 +1,81 @@
+.job {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+h3 {
+    font-size: 17px;
+}
+
+.sub {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+}
+
+.chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.remote {
+    color: var(--primary);
+}
+
+.applied {
+    color: var(--success);
+}
+
+.date {
+    color: var(--muted);
+}
+
+.reason {
+    font-size: 14px;
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.skill {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.ok {
+    background: #c8e6c9;
+    color: #1b5e20;
+}
+
+.miss {
+    border: 1px solid var(--danger);
+    color: var(--danger);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+}

@@ -1,0 +1,31 @@
+<article class="card job">
+    <div class="top">
+        <div>
+            <h3>{{ job.title }}</h3>
+            <p class="sub">{{ job.company }} · {{ job.location }}</p>
+        </div>
+        <app-score-badge [score]="job.score"></app-score-badge>
+    </div>
+
+    <div class="meta">
+        <span class="chip">{{ job.source }}</span>
+        <span class="chip remote" *ngIf="job.is_remote">Remote</span>
+        <span class="chip applied" *ngIf="job.status === 'APPLIED'">Applied</span>
+        <span class="date" *ngIf="job.posted_at">{{ job.posted_at | date: 'mediumDate' }}</span>
+    </div>
+
+    <p class="reason">{{ job.reason }}</p>
+
+    <div class="skills">
+        <span class="skill ok" *ngFor="let s of job.matched_skills">{{ s }}</span>
+        <span class="skill miss" *ngFor="let s of job.missing_skills">{{ s }}</span>
+    </div>
+
+    <div class="actions">
+        <a class="btn" [href]="job.url" target="_blank" rel="noopener noreferrer">Open job</a>
+        <button class="btn btn-primary" (click)="applied.emit(job)" [disabled]="job.status === 'APPLIED'">
+            Mark as applied
+        </button>
+        <button class="btn" (click)="ignored.emit(job)">Ignore</button>
+    </div>
+</article>

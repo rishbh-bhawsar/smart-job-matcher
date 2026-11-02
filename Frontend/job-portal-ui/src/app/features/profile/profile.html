@@ -1,0 +1,26 @@
+<h2>Profile</h2>
+
+<form class="card form" (ngSubmit)="save()">
+    <label>Name <input class="field" name="name" [(ngModel)]="name" /></label>
+    <label>Email <input class="field" name="email" type="email" [(ngModel)]="email" /></label>
+    <label>
+        Skills (comma separated)
+        <input class="field" name="skills" [(ngModel)]="skillsText" placeholder="Angular, Node.js, MySQL" />
+    </label>
+    <label>
+        Target job titles (comma separated)
+        <input class="field" name="titles" [(ngModel)]="titlesText"
+            placeholder="Full Stack Developer, Angular Developer" />
+    </label>
+    <label>
+        Minimum match score: {{ minScore }}
+        <input type="range" name="score" min="0" max="100" step="5" [(ngModel)]="minScore" />
+    </label>
+    <label>
+        Resume text
+        <textarea class="field" name="resume" rows="10" [(ngModel)]="resumeText"></textarea>
+    </label>
+
+    <button class="btn btn-primary" type="submit">Save</button>
+    <p class="msg" *ngIf="message">{{ message }}</p>
+</form>

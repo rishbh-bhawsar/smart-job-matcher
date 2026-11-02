@@ -1,0 +1,84 @@
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.tabs button:not(.sync) {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+}
+
+.tabs button.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.sync {
+    margin-left: auto;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+    margin-bottom: 16px;
+}
+
+.filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.grow {
+    flex: 1;
+    min-width: 180px;
+}
+
+.summary,
+.empty {
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+
+.error {
+    color: var(--danger);
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 400px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #323232;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
