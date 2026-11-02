@@ -1,0 +1,794 @@
+{
+	"info": {
+		"_postman_id": "7b3df69e-d375-408a-b851-93e110cb105e",
+		"name": "Smart Job Matcher API",
+		"description": "Postman Collection for **Smart Job Matcher** Backend REST API.\n\n### Features\n- **Health Check**: Server alive check\n- **Profile Management**: View and update candidate profile, skills, target job titles, and minimum match score\n- **Jobs Management**: Query scored and matched jobs with status & score filtering, update application statuses\n- **Notifications**: View match alerts and mark as read\n- **Job Sync & AI Matching**: Trigger manual on-demand scrape across Remotive, RemoteOK, Adzuna, and Email alerts, followed by OpenAI job matching\n\n### Authentication\nAll endpoints under `/api/*` require the `x-api-key` header matching the `API_KEY` defined in the Backend `.env`.\nThe collection uses the `{{apiKey}}` collection variable.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "x-api-key",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{apiKey}}",
+				"type": "string"
+			},
+			{
+				"key": "in",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string",
+			"description": "Base URL of the backend server"
+		},
+		{
+			"key": "apiKey",
+			"value": "change_me_to_a_long_random_string",
+			"type": "string",
+			"description": "API key matching process.env.API_KEY in Backend/.env"
+		},
+		{
+			"key": "jobId",
+			"value": "1",
+			"type": "string",
+			"description": "Sample job ID for status update"
+		},
+		{
+			"key": "notificationId",
+			"value": "1",
+			"type": "string",
+			"description": "Sample notification ID for marking read"
+		}
+	],
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Verifies that the backend server is up and running. Does not require API Key authentication."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/health",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"ok\": true\n}"
+						}
+					]
+				}
+			],
+			"description": "Health check endpoints"
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"profile"
+							]
+						},
+						"description": "Fetches candidate's profile, including parsed skills, target job titles, resume text, and minimum score threshold."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/profile",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"id\": 1,\n  \"name\": \"Alex Morgan\",\n  \"email\": \"alex.morgan@example.com\",\n  \"resume_text\": \"Full Stack Software Engineer with expertise in Node.js, Express, Angular, MySQL, and cloud services...\",\n  \"skills\": [\n    \"Node.js\",\n    \"Express\",\n    \"Angular\",\n    \"JavaScript\",\n    \"TypeScript\",\n    \"MySQL\",\n    \"REST API\",\n    \"Docker\"\n  ],\n  \"target_titles\": [\n    \"Full Stack Developer\",\n    \"Backend Engineer\",\n    \"Software Engineer\"\n  ],\n  \"min_score\": 70,\n  \"created_at\": \"2026-01-01T00:00:00.000Z\",\n  \"updated_at\": \"2026-01-01T00:00:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Alex Morgan\",\n  \"email\": \"alex.morgan@example.com\",\n  \"resume_text\": \"Experienced Full Stack Developer with 5+ years building scalable web services. Proficient in Node.js, Express, TypeScript, Angular, and MySQL.\",\n  \"skills\": [\n    \"Node.js\",\n    \"TypeScript\",\n    \"JavaScript\",\n    \"Express\",\n    \"Angular\",\n    \"MySQL\",\n    \"REST API\",\n    \"Docker\",\n    \"Git\"\n  ],\n  \"target_titles\": [\n    \"Full Stack Developer\",\n    \"Backend Engineer\",\n    \"Software Engineer\"\n  ],\n  \"min_score\": 70\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"profile"
+							]
+						},
+						"description": "Updates profile details including resume text, skills list, target titles, and minimum score threshold for AI matching."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Alex Morgan\",\n  \"email\": \"alex.morgan@example.com\",\n  \"resume_text\": \"Experienced Full Stack Developer with 5+ years...\",\n  \"skills\": [\"Node.js\", \"TypeScript\"],\n  \"target_titles\": [\"Full Stack Developer\"],\n  \"min_score\": 70\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/profile",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"ok\": true\n}"
+						}
+					]
+				}
+			],
+			"description": "Candidate profile management endpoints"
+		},
+		{
+			"name": "Jobs",
+			"item": [
+				{
+					"name": "List All Jobs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/jobs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"jobs"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "INDORE",
+									"disabled": true,
+									"description": "Filter by job category (e.g., INDORE, REMOTE)"
+								},
+								{
+									"key": "status",
+									"value": "NEW",
+									"disabled": true,
+									"description": "Filter by status: NEW, NOTIFIED, APPLIED, IGNORED, NOT_APPLIED"
+								},
+								{
+									"key": "minScore",
+									"value": "70",
+									"disabled": true,
+									"description": "Filter by minimum AI match score (0-100)"
+								}
+							]
+						},
+						"description": "Lists matched jobs ordered by AI match score descending and fetch date descending (limit 200).\n\nAutomatically captures the first job's ID into the `{{jobId}}` variable."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/jobs",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"jobs"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "[\n  {\n    \"id\": 1,\n    \"source\": \"remotive\",\n    \"external_id\": \"12345\",\n    \"title\": \"Full Stack Engineer (Node.js & Angular)\",\n    \"company\": \"Acme Corp\",\n    \"location\": \"Remote\",\n    \"is_remote\": 1,\n    \"category\": \"REMOTE\",\n    \"description\": \"We are looking for a skilled developer...\",\n    \"url\": \"https://example.com/job/12345\",\n    \"salary\": \"$90,000 - $120,000\",\n    \"posted_at\": \"2026-11-01T10:00:00.000Z\",\n    \"fetched_at\": \"2026-11-02T04:00:00.000Z\",\n    \"score\": 88,\n    \"reason\": \"Candidate matches 8/9 required technologies including Node.js, TypeScript, and MySQL.\",\n    \"matched_skills\": [\"Node.js\", \"TypeScript\", \"MySQL\", \"REST API\"],\n    \"missing_skills\": [\"Kubernetes\"],\n    \"status\": \"NEW\",\n    \"applied_at\": null\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "List Jobs - Filtered (Not Applied & Min Score 70)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/jobs?status=NOT_APPLIED&minScore=70",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"jobs"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "NOT_APPLIED",
+									"description": "Matches user jobs with status NEW or NOTIFIED"
+								},
+								{
+									"key": "minScore",
+									"value": "70",
+									"description": "Only jobs with AI score >= 70"
+								}
+							]
+						},
+						"description": "Filters jobs that haven't been applied to yet (status is NEW or NOTIFIED) and meet the minimum match score threshold of 70."
+					},
+					"response": []
+				},
+				{
+					"name": "List Jobs - Filtered (Category INDORE)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/jobs?category=INDORE&minScore=60",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"jobs"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "INDORE",
+									"description": "Filter specifically for Indore local/remote jobs"
+								},
+								{
+									"key": "minScore",
+									"value": "60",
+									"description": "Minimum score filter"
+								}
+							]
+						},
+						"description": "Returns jobs specifically tagged for category INDORE with match score >= 60."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Job Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"APPLIED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/jobs/:id/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"jobs",
+								":id",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{jobId}}",
+									"description": "ID of the job to update"
+								}
+							]
+						},
+						"description": "Updates candidate interaction status for a job.\n\n**Allowed status values:**\n- `NEW`\n- `NOTIFIED`\n- `APPLIED` (sets `applied_at` timestamp automatically)\n- `IGNORED`"
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"APPLIED\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/jobs/:id/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"jobs",
+										":id",
+										"status"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"ok\": true\n}"
+						},
+						{
+							"name": "400 Bad Request - Invalid Status",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"INVALID_STATUS\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/jobs/:id/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"jobs",
+										":id",
+										"status"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"error\": \"Invalid status\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints to query matched jobs and update user application status"
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "List Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/notifications",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"notifications"
+							]
+						},
+						"description": "Returns the latest 100 notifications generated for job matches, including job title and company."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/notifications",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"notifications"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "[\n  {\n    \"id\": 1,\n    \"job_id\": 1,\n    \"channel\": \"EMAIL\",\n    \"is_read\": 0,\n    \"created_at\": \"2026-11-02T04:05:00.000Z\",\n    \"title\": \"Full Stack Engineer (Node.js & Angular)\",\n    \"company\": \"Acme Corp\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/notifications/:id/read",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								":id",
+								"read"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{notificationId}}",
+									"description": "ID of the notification to mark read"
+								}
+							]
+						},
+						"description": "Marks a notification as read (`is_read = 1`)."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/notifications/:id/read",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"notifications",
+										":id",
+										"read"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"ok\": true\n}"
+						}
+					]
+				}
+			],
+			"description": "Notification endpoints for match alerts"
+		},
+		{
+			"name": "Sync",
+			"item": [
+				{
+					"name": "Trigger Job Sync & Matching",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{apiKey}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/sync/run",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"sync",
+								"run"
+							]
+						},
+						"description": "Manually triggers the background sync job pipeline:\n1. Fetches new jobs from Remotive, RemoteOK, Adzuna, and Email alerts\n2. Filters and de-duplicates them\n3. Runs OpenAI to calculate match score, reason, matched skills, and missing skills\n4. Saves match scores in database\n5. Sends email/in-app notifications for matches above `min_score`\n\nReturns `{ \"fetched\": <count>, \"matched\": <count> }`."
+					},
+					"response": [
+						{
+							"name": "200 OK - Sync Completed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/sync/run",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sync",
+										"run"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"fetched\": 8,\n  \"matched\": 2\n}"
+						},
+						{
+							"name": "409 Conflict - Sync Already Running",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{apiKey}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/sync/run",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sync",
+										"run"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"body": "{\n  \"error\": \"Sync already running\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Job synchronization and AI matching triggers"
+		}
+	]
+}
+
