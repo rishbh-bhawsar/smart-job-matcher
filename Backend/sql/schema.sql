@@ -1,4 +1,4 @@
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100),
   email VARCHAR(150),
@@ -8,7 +8,7 @@ CREATE TABLE profiles (
   min_score INT DEFAULT 70
 );
 
-CREATE TABLE jobs (
+CREATE TABLE IF NOT EXISTS jobs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   source VARCHAR(50),
   external_id VARCHAR(150),
@@ -25,7 +25,7 @@ CREATE TABLE jobs (
   fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE job_matches (
+CREATE TABLE IF NOT EXISTS job_matches (
   id INT AUTO_INCREMENT PRIMARY KEY,
   job_id INT NOT NULL UNIQUE,
   profile_id INT NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE job_matches (
   FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
 
-CREATE TABLE user_jobs (          -- your status per job
+CREATE TABLE IF NOT EXISTS user_jobs (          -- your status per job
   id INT AUTO_INCREMENT PRIMARY KEY,
   job_id INT NOT NULL UNIQUE,
   status ENUM('NEW','NOTIFIED','APPLIED','IGNORED') DEFAULT 'NEW',
@@ -45,7 +45,7 @@ CREATE TABLE user_jobs (          -- your status per job
   FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
 
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
   id INT AUTO_INCREMENT PRIMARY KEY,
   job_id INT NOT NULL,
   channel ENUM('EMAIL','IN_APP') DEFAULT 'EMAIL',
@@ -55,4 +55,10 @@ CREATE TABLE notifications (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   sent_at DATETIME NULL,
   FOREIGN KEY (job_id) REFERENCES jobs(id)
+);
+
+CREATE TABLE IF NOT EXISTS processed_emails (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  message_id VARCHAR(255) NOT NULL UNIQUE,
+  processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

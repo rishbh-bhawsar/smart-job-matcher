@@ -31,20 +31,39 @@ exports.getByIds = async ids => {
 };
 
 exports.list = async ({ category, status, minScore = 0 }) => {
+    const scoreThreshold = parseInt(minScore) || 0;
     let sql = `
-    SELECT j.*, m.score, m.reason, m.matched_skills, m.missing_skills, u.status, u.applied_at
+    SELECT j.*, 
+           COALESCE(m.score, 0) AS score, 
+           m.reason, 
+           m.matched_skills, 
+           m.missing_skills, 
+           COALESCE(u.status, 'NEW') AS status, 
+           u.applied_at
     FROM jobs j
-    JOIN job_matches m ON m.job_id = j.id
-    JOIN user_jobs u ON u.job_id = j.id
-    WHERE m.score >= ?`;
-    const params = [minScore];
+    LEFT JOIN job_matches m ON m.job_id = j.id
+    LEFT JOIN user_jobs u ON u.job_id = j.id
+    WHERE 1=1`;
+    const params = [];
 
-    if (category) { sql += ' AND j.category = ?'; params.push(category); }
+    if (scoreThreshold > 0) {
+        sql += ' AND m.score >= ?';
+        params.push(scoreThreshold);
+    }
 
-    if (status === 'NOT_APPLIED') sql += " AND u.status IN ('NEW','NOTIFIED')";
-    else if (status) { sql += ' AND u.status = ?'; params.push(status); }
+    if (category) {
+        sql += ' AND j.category = ?';
+        params.push(category);
+    }
 
-    sql += ' ORDER BY m.score DESC, j.fetched_at DESC LIMIT 200';
+    if (status === 'NOT_APPLIED') {
+        sql += " AND (u.status IN ('NEW','NOTIFIED') OR u.status IS NULL)";
+    } else if (status) {
+        sql += ' AND u.status = ?';
+        params.push(status);
+    }
+
+    sql += ' ORDER BY score DESC, j.fetched_at DESC LIMIT 200';
     const [rows] = await db.query(sql, params);
     return rows;
 };

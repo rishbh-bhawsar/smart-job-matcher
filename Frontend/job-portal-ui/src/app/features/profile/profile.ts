@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/api.service';
@@ -11,24 +11,27 @@ import { ApiService } from '../../core/api.service';
   styleUrls: ['./profile.css']
 })
 export class ProfileComponent implements OnInit {
-  name = '';
-  email = '';
-  resumeText = '';
-  skillsText = '';
-  titlesText = '';
-  minScore = 70;
-  message = '';
+  model:any ={
+  name:"",
+  email: '',
+  resumeText : '',
+  skillsText : '',
+  titlesText : '',
+  minScore : 70  
+  }
+  message:string ="";
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService,private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.api.getProfile().subscribe(p => {
-      this.name = p.name;
-      this.email = p.email;
-      this.resumeText = p.resume_text;
-      this.skillsText = (p.skills || []).join(', ');
-      this.titlesText = (p.target_titles || []).join(', ');
-      this.minScore = p.min_score;
+      this.model.name = p.name;
+      this.model.email = p.email;
+      this.model.resumeText = p.resume_text;
+      this.model.skillsText = (p.skills || []).join(', ');
+      this.model.titlesText = (p.target_titles || []).join(', ');
+      this.model.minScore = p.min_score;
+      this.cdr.detectChanges();            
     });
   }
 
@@ -39,12 +42,12 @@ export class ProfileComponent implements OnInit {
   save() {
     this.api
       .saveProfile({
-        name: this.name,
-        email: this.email,
-        resume_text: this.resumeText,
-        skills: this.split(this.skillsText),
-        target_titles: this.split(this.titlesText),
-        min_score: this.minScore
+        name: this.model.name,
+        email: this.model.email,
+        resume_text: this.model.resumeText,
+        skills: this.split(this.model.skillsText),
+        target_titles: this.split(this.model.titlesText),
+        min_score: this.model.minScore
       })
       .subscribe({
         next: () => this.show('Profile saved'),
